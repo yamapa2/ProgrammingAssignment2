@@ -29,9 +29,31 @@ cacheSolve <- function(x, ...) {
     else {
         message("calculating inverse")
         data <- x$get()
-        xinv <- solve(data)
+        xinv <- solve(data, ...)
         x$setinv(xinv)
     }
 
     xinv
 }
+
+## A test function to evaluate the cacheSolve
+## First parameter proves the dimensions, second parameter provides the number of times
+## the inverse have to be called
+## Returns the some of all elements in the product of the matrix and its inverse
+## It should be equal to the dimension of the matrix (n)
+test <- function(n, k) {
+    A <- matrix(rexp(n*n, rate=.1), ncol=n)
+    fA <- makeCacheMatrix(A)
+    for(i in 1:k)
+        fAinv <- cacheSolve(fA)
+    sum(fAinv %*% A)
+}
+
+print("10x10 matrix")
+print(test(10, 4))
+
+print("20x20 matrix")
+print(test(20, 7))
+
+print("1000x1000 matrix")
+print(test(1000, 10))
